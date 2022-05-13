@@ -30,7 +30,8 @@ class Population:
             chromosomeTransformed = copy.deepcopy(chromosome)
             if previousSections:
                 calculatedFitness = chromosome.calculateFitness([])
-                chromosomeTransformed = copy.deepcopy(self.transformToSemiGroups(chromosome, allSemiGroups))
+                # chromosomeTransformed = self.transformToSemiGroups(chromosome, allSemiGroups)
+                chromosomeTransformed = chromosome.transformToSemiGroups(allSemiGroups)
                 calculatedFitness += chromosomeTransformed.calculateFitness(previousSections)
             else:
                 calculatedFitness = copy.deepcopy(chromosomeTransformed.calculateFitness([]))
@@ -70,16 +71,6 @@ class Population:
 
     def GetChromosomes(self):
         return self.chromosomes
-
-    def transformToSemiGroups(self, chromosome, allSemiGroups):
-        newBestChromosome = copy.deepcopy(chromosome)
-        newBestChromosome.sections = []
-        for section in chromosome.sections:
-            for semigroup in section.group.transformToSemiGroups(allSemiGroups):
-                newBestChromosome.sections.append(
-                    Section(section.course, semigroup, section.professor, section.room, section.dayOfTheWeek,
-                            section.timeInterval))
-        return newBestChromosome
 
     def __str__(self):
         result = ''

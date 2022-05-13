@@ -82,7 +82,7 @@ def BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDa
 
         # nr_of_generations -= 1
 
-    p1.bestChromosome = p1.transformToSemiGroups(p1.bestChromosome, semigroups)
+    p1.bestChromosome = p1.bestChromosome.transformToSemiGroups(semigroups)
     # print('best solution is:\n', p1.bestChromosome)
     print('best fitness is: ', p1.bestFitness)
 

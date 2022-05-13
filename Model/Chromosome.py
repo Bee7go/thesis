@@ -37,8 +37,11 @@ class Chromosome:
         #     for currentSection in currentSections:
         #         print(currentSection)
         #     print (" ------------------------------------------------ ")
+
+        gdtScore = 0
+        rdtScore = 0
+        pdtScore = 0
         if previousSections:
-            # print("previousSections")
 
             for section1 in currentSections:
                 gdt1 = (section1.group.id, section1.dayOfTheWeek.id, section1.timeInterval.id)
@@ -53,14 +56,20 @@ class Chromosome:
                     if gdt1 == gdt2:
                         # print("G")
                         score += 1
+                        gdtScore += 1
                     if rdt1 == rdt2:
                         # print("R")
                         score += 1
+                        rdtScore += 1
+
                     if pdt1 == pdt2:
                         # print("P")
                         score += 1
+                        pdtScore += 1
 
-            return score
+            # print("previousSections")
+
+            return gdtScore//2 + rdtScore//2 + pdtScore//2
         for section in currentSections:
             gdt = (section.group.id, section.dayOfTheWeek.id, section.timeInterval.id)
             if gdt in gdts:
@@ -123,6 +132,27 @@ class Chromosome:
             self.sections[r].professor = new
             # print('after')
             # print(self.sections[r].professor)
+
+
+    def transformToSemiGroups(self, allSemiGroups):
+        newBestChromosome = copy.deepcopy(self)
+        newBestChromosome.sections = []
+        for section in self.sections:
+            for semigroup in section.group.transformToSemiGroups(allSemiGroups):
+                newBestChromosome.sections.append(
+                    Section(section.course, semigroup, section.professor, section.room, section.dayOfTheWeek,
+                            section.timeInterval))
+        return newBestChromosome
+
+    # def transformToGroups(self, allGroups):
+    #     newBestChromosome = copy.deepcopy(self)
+    #     newBestChromosome.sections = []
+    #     for section in self.sections:
+    #         for semigroup in section.group.transformToSemiGroups(allGroups):
+    #             newBestChromosome.sections.append(
+    #                 Section(section.course, semigroup, section.professor, section.room, section.dayOfTheWeek,
+    #                         section.timeInterval))
+    #     return newBestChromosome
 
     def __str__(self):
         result = ''
