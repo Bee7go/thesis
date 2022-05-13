@@ -144,15 +144,6 @@ class Chromosome:
                             section.timeInterval))
         return newBestChromosome
 
-    # def transformToGroups(self, allGroups):
-    #     newBestChromosome = copy.deepcopy(self)
-    #     newBestChromosome.sections = []
-    #     for section in self.sections:
-    #         for semigroup in section.group.transformToSemiGroups(allGroups):
-    #             newBestChromosome.sections.append(
-    #                 Section(section.course, semigroup, section.professor, section.room, section.dayOfTheWeek,
-    #                         section.timeInterval))
-    #     return newBestChromosome
 
     def __str__(self):
         result = ''

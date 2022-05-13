@@ -114,9 +114,9 @@ def BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDa
 
         nr_of_generations -= 1
     # print('best solution is:\n', p2.bestChromosome)
-    # p2.bestChromosome = p2.transformToSemiGroups(p2.bestChromosome, semigroups)
-    # print('best solution is:\n', p2.bestChromosome)
-    # print(p1.bestChromosome)
+    p2.bestChromosome = p2.bestChromosome.transformToSemiGroups(semigroups)
+    print('best solution is:\n', p2.bestChromosome)
+    print(p1.bestChromosome)
     print('best fitness is: ', p2.bestFitness)
     # TO DO: daca fitness-ul e naspa => reia procesul (inclusiv pt p1)
 
