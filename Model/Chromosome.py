@@ -111,6 +111,15 @@ class Chromosome:
             return gdtScore // 2 + rdtScore // 2 + pdtScore // 2
         for section in currentSections:
             gdt = (section.group.id, section.dayOfTheWeek.id, section.timeInterval.id)
+
+            if section.professor.preferences:
+                if section.dayOfTheWeek.id not in [d['dayOfTheWeek'] for d in section.professor.preferences]:
+                    score += 60
+                else:
+                    timeIntervalsPreferences = section.professor.preferences[next((index for (index, d) in enumerate(section.professor.preferences) if d["dayOfTheWeek"] == section.dayOfTheWeek.id), None)]['timeIntervals']
+                    if timeIntervalsPreferences and section.timeInterval.id not in timeIntervalsPreferences:
+                        score += 30
+
             if gdt in gdts:
                 # print("G")
                 score += 1

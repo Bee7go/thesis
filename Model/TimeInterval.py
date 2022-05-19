@@ -14,4 +14,4 @@ class TimeInterval:
         return self.endTime
 
     def __str__(self):
-        return self.id + ' --- ' + self.startTime + ' --- ' + self.endTime
+        return self.id + '. [' + self.startTime + ' - ' + self.endTime + ']'

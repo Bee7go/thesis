@@ -512,81 +512,6 @@ def main():
     currentG = 200
     currentSol = currentVariables[5]
 
-    # professors
-    file = open('Data/possible_professors.csv')
-    rows = csv.reader(file)
-    professors = []
-    for professor in rows:
-        professors.append(Professor(professor[0], professor[1]))
-        # print(str(professors[len(professors) - 1]))
-
-    # courses
-    file = open('Data/possible_courses.csv')
-    rows = csv.reader(file)
-    courses = []
-
-    for course in rows:
-        courseProfessors = []
-        for professor in course[2:]:
-            for p in professors:
-                if p.id == professor:
-                    courseProfessors.append(p)
-
-        courses.append(Course(course[0], course[1], courseProfessors))
-        # print(str(courses[len(courses) - 1]))
-
-    # academic years
-    file = open('Data/possible_academicYears.csv')
-    rows = csv.reader(file)
-    academicYears = []
-
-    for academicYear in rows:
-        academicYearCourses = []
-        for course in academicYear[2:]:
-            for c in courses:
-                if c.id == course:
-                    academicYearCourses.append(c)
-
-        academicYears.append(AcademicYear(academicYear[0], academicYear[1], academicYearCourses))
-        # print(str(academicYears[len(academicYears) - 1]))
-
-    # groups
-    file = open('Data/possible_groups.csv')
-    rows = csv.reader(file)
-    groups = []
-    for group in rows:
-        groupCourses = []
-        for course in group[1:]:
-            for c in courses:
-                if c.id == course:
-                    groupCourses.append(c)
-
-        groups.append(Group(group[0], group[1], groupCourses))
-
-        print(str(groups[len(groups) - 1]))
-
-    # semi-groups
-    file = open('Data/possible_semigroups.csv')
-    rows = csv.reader(file)
-    semigroups = []
-    for semigroup in rows:
-        semigroupCourses = []
-        for course in semigroup[4:]:
-            for c in courses:
-                if c.id == course:
-                    semigroupCourses.append(c)
-
-        semigroups.append(SemiGroup(semigroup[0], semigroup[1], semigroup[2], semigroup[3], semigroupCourses))
-        # print(str(semigroupCourses[0]))
-
-    # rooms
-    file = open('Data/possible_rooms.csv')
-    rows = csv.reader(file)
-    rooms = []
-    for room in rows:
-        rooms.append(Room(room[0], room[1], room[2]))
-        # print(str(rooms[len(rooms) - 1]))
-
     # time intervals
     file = open('Data/timeIntervals.csv')
     rows = csv.reader(file)
@@ -601,6 +526,88 @@ def main():
     workingDays = []
     for dayOfTheWeek in rows:
         workingDays.append(DayOfTheWeek(dayOfTheWeek[0], dayOfTheWeek[1]))
+
+
+    # professors
+    file = open('Data/professors.csv')
+    rows = csv.reader(file)
+    professors = []
+    for professor in rows:
+        professors.append(Professor(professor[0], professor[1]))
+        # print(str(professors[len(professors) - 1]))
+    professors[2].addPreferences({'dayOfTheWeek': workingDays[1].id, 'timeIntervals': [timeIntervals[0].id, timeIntervals[1].id]})
+    professors[2].addPreferences({'dayOfTheWeek': workingDays[3].id, 'timeIntervals': [timeIntervals[2].id, timeIntervals[4].id]})
+    print(professors[2])
+
+
+    # courses
+    file = open('Data/courses.csv')
+    rows = csv.reader(file)
+    courses = []
+
+    for course in rows:
+        courseProfessors = []
+        for professor in course[2:]:
+            for p in professors:
+                if p.id == professor:
+                    courseProfessors.append(p)
+
+        courses.append(Course(course[0], course[1], courseProfessors))
+        # print(str(courses[len(courses) - 1]))
+
+    # academic years
+    file = open('Data/academicYears.csv')
+    rows = csv.reader(file)
+    academicYears = []
+
+    for academicYear in rows:
+        academicYearCourses = []
+        for course in academicYear[2:]:
+            for c in courses:
+                if c.id == course:
+                    academicYearCourses.append(c)
+
+        academicYears.append(AcademicYear(academicYear[0], academicYear[1], academicYearCourses))
+        # print(str(academicYears[len(academicYears) - 1]))
+
+    # groups
+    file = open('Data/groups.csv')
+    rows = csv.reader(file)
+    groups = []
+    for group in rows:
+        groupCourses = []
+        for course in group[1:]:
+            for c in courses:
+                if c.id == course:
+                    groupCourses.append(c)
+
+        groups.append(Group(group[0], group[1], groupCourses))
+
+        print(str(groups[len(groups) - 1]))
+
+    # semi-groups
+    file = open('Data/semigroups.csv')
+    rows = csv.reader(file)
+    semigroups = []
+    for semigroup in rows:
+        semigroupCourses = []
+        for course in semigroup[4:]:
+            for c in courses:
+                if c.id == course:
+                    semigroupCourses.append(c)
+
+        semigroups.append(SemiGroup(semigroup[0], semigroup[1], semigroup[2], semigroup[3], semigroupCourses))
+        # print(str(semigroupCourses[0]))
+
+    # rooms
+    file = open('Data/rooms.csv')
+    rows = csv.reader(file)
+    rooms = []
+    for room in rows:
+        rooms.append(Room(room[0], room[1], room[2]))
+        # print(str(rooms[len(rooms) - 1]))
+
+
 
     # user types
     file = open('Data/userTypes.csv')
@@ -738,6 +745,51 @@ def main():
 
             if adminUserChoice == 2:
                 print(currentSol)
+            if adminUserChoice == 3:
+                while True:
+                    operationsOnEachDataSetMenu("account")
+                    operationOnAccount = int(input("=> choice: "))
+                    print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
+                    if operationOnAccount == 1:  # add
+                        accountNewName = input("=> new username to be set: ")
+                        accountPassword = input("=> new password to be set: ")
+                        accountType = input("=> new account type (1 System Administrator, 2 Timetable responsible, 3 Student, 4 Professor): ")
+                        print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
+                        idToAdd = int(users[len(users) - 1].id) + 1
+
+                        users.append(User(str(idToAdd), accountNewName, accountPassword, accountType))
+                        print("User created successfully!")
+
+                    if operationOnAccount == 2:  # update
+                        idToUpdate = input("=> userId to be updated: ")
+                        accountNewName = input("=> new username to be set: ")
+                        accountPassword = input("=> new password to be set: ")
+                        accountType = input("=> new account type (1 System Administrator, 2 Timetable responsible, 3 Student, 4 Professor): ")
+                        print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
+                        for user in users:
+                            if user.id == idToUpdate:
+                                user.userName = accountNewName
+                                user.password = accountPassword
+                                user.type = accountType
+                                break
+                        print("User updated successfully!")
+
+                    if operationOnAccount == 3:  # delete
+                        idToDelete = input("=> userId to be deleted: ")
+                        print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
+                        for user in users:
+                            if user.id == idToDelete:
+                                users.remove(user)
+                                break
+                        print("User deleted successfully!")
+
+                    if operationOnAccount == 4:  # show
+                        for user in users:
+                            print(str(user))
+                    if operationOnAccount == 5:
+                        break
+
+
 
     # timetable responsible:
     if currentUser.type == "2":
@@ -802,6 +854,7 @@ def main():
                                 idToAdd = int(professors[len(professors) - 1].id) + 1
 
                                 professors.append(Professor(str(idToAdd), professorNewName))
+                                users.append(User(str(int(users[len(users)-1].id) + 1), professorNewName, "1234", '3'))
                                 print("Professor created successfully!")
 
                             if operationOnProfessor == 2:  # update
@@ -811,8 +864,12 @@ def main():
                                     "< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
                                 for professor in professors:
                                     if professor.id == idToUpdate:
+                                        for user in users:
+                                            if user.userName == professor.name:
+                                                user.userName = professorNewName
                                         professor.name = professorNewName
                                         break
+
                                 print("Professor updated successfully!")
 
                             if operationOnProfessor == 3:  # delete
@@ -821,6 +878,9 @@ def main():
                                     "< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
                                 for professor in professors:
                                     if professor.id == idToDelete:
+                                        for user in users:
+                                            if user.userName == professor.name:
+                                                users.remove(user)
                                         professors.remove(professor)
                                         break
                                 print("Professor deleted successfully!")
@@ -1084,6 +1144,46 @@ def main():
 
                 for section in profSections:
                     print(str(section))
+            if professorsChoice == 2:
+                print("Day of the week in which you prefer to work:")
+                for day in workingDays:
+                    print(day)
+                # print("1. Monday")
+                # print("2. Tuesday")
+                # print("3. Wednesday")
+                # print("4. Thursday")
+                # print("5. Friday")
+                dayOfTheWeek = input("=> day chosen: ")
+                print("Time intervals you prefer in that day:")
+                for tI in timeIntervals:
+                    print(tI)
+                # print("1. [8,10]")
+                # print("2. [10,12]")
+                # print("3. [12-14]")
+                # print("4. [14-16]")
+                # print("5. [16-18]")
+                # print("6. [18-20]")
+                currentTimeIntervals = input("=> time intervals chosen (separated by ','): ")
+
+                print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
+                if currentTimeIntervals == '':
+                    currentTimeIntervals = []
+                else:
+                    currentTimeIntervals = currentTimeIntervals.split(',')
+                for prof in professors:
+                    if prof.name == currentUser.userName:
+                        if dayOfTheWeek in [d['dayOfTheWeek'] for d in prof.preferences]:
+                            existingTimeIntervals = prof.preferences[next(
+                                (index for (index, d) in enumerate(prof.preferences) if
+                                 d["dayOfTheWeek"] == dayOfTheWeek), None)]['timeIntervals']
+                            for ct in currentTimeIntervals:
+                                if ct not in existingTimeIntervals:
+                                    existingTimeIntervals += ct
+                        else:
+                            prof.addPreferences({'dayOfTheWeek': dayOfTheWeek, 'timeIntervals': currentTimeIntervals})
+                        break
+                for prof in professors:
+                    print(prof.preferences)
 
 
 if __name__ == "__main__":
