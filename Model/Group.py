@@ -1,9 +1,8 @@
 class Group:
 
-    def __init__(self, id, name, numberOfStudents, courseClasses):
+    def __init__(self, id, name, courseClasses):
         self.id = id
         self.name = name
-        self.numberOfStudents = numberOfStudents
         self.courseClasses = courseClasses
 
     def AddClass(self, courseClass):
@@ -32,7 +31,7 @@ class Group:
         return self.id == otherGroup.id
 
     def __str__(self):
-        result = self.id + ' --- ' + self.name + ' --- ' + self.numberOfStudents + ' --- '
+        result = self.id + ' --- ' + self.name + ' --- '
         for c in self.courseClasses:
             result += str(c) + ' '
         return result

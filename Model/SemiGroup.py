@@ -1,14 +1,14 @@
 class SemiGroup:
 
-    def __init__(self, id, name, academicYearId, groupId, labs,):
+    def __init__(self, id, name, academicYearId, groupId, courseClasses):
         self.id = id
         self.name = name
-        self.labs = labs
+        self.courseClasses = courseClasses
         self.academicYearId = academicYearId
         self.groupId = groupId
 
     def AddLab(self, lab):
-        self.labs.append(lab)
+        self.courseClasses.append(lab)
 
     def GetId(self):
         return self.id
@@ -17,14 +17,21 @@ class SemiGroup:
         return str(self.name)
 
     def Getlabs(self):
-        return self.labs
+        return self.courseClasses
+
+    def transformToSemiGroups(self, allSemiGroups):
+        semigroups = []
+        for semigroup in allSemiGroups:
+            if semigroup.id == self.id:
+                semigroups.append(semigroup)
+        return semigroups
 
     def __eq__(self, otherSemiGroup):
         return self.id == otherSemiGroup.id
 
     def __str__(self):
         result = self.id + ' --- ' + self.name + ' --- '
-        for c in self.labs:
+        for c in self.courseClasses:
             result += str(c) + ' '
         return result
 

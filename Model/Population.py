@@ -14,17 +14,24 @@ class Population:
         self.timeIntervals = timeIntervals
         self.chromosomes = []
         self.fitnessScores = []
-        self.generatePopulation()
+        # self.generatePopulation()
         self.bestFitness = 300000
         # self.bestChromosome = []
 
-    def generatePopulation(self):
+    def generatePopulationForCourses(self):
         for _ in range(self.length):
             c = Chromosome(self.groups, self.rooms, self.workingDays, self.timeIntervals)
+            c.generateChromosome()
+            self.chromosomes.append(c)
+
+    def generatePopulationForSeminars(self, previousSections):
+        for _ in range(self.length):
+            c = Chromosome(self.groups, self.rooms, self.workingDays, self.timeIntervals)
+            c.generateChromosomeForSeminars(previousSections)
             self.chromosomes.append(c)
 
     def calculateFitnessScores(self, previousSections, allSemiGroups):
-        print("===> goes in here!!!")
+        # print("===> goes in here!!!")
         self.fitnessScores = []
         for chromosome in self.chromosomes:
             chromosomeTransformed = copy.deepcopy(chromosome)
@@ -36,7 +43,7 @@ class Population:
             else:
                 calculatedFitness = copy.deepcopy(chromosomeTransformed.calculateFitness([]))
             self.fitnessScores.append(calculatedFitness)
-        print(self.fitnessScores)
+        # print(self.fitnessScores) aici putem vedea ceva scoruri
 
     def getBestKChromosomes(self, k, previousSections, allSemiGroups):
         self.calculateFitnessScores(previousSections, allSemiGroups)
@@ -53,11 +60,20 @@ class Population:
             # print(str(self.chromosomes[pos].sections[0] + ' + ' + self.chromosomes[pos].calculateFitness([]))
 
         self.chromosomes = bestChromosomes
+        # return bestChromosomes
         # self.length = len(self.chromosomes)
 
-    def preparePopulationForNextGeneration(self):
+    def preparePopulationForNextGenerationCourses(self):
         while len(self.chromosomes) < self.length:
-            self.addChromosome(Chromosome(self.groups, self.rooms, self.workingDays, self.timeIntervals))
+            c = Chromosome(self.groups, self.rooms, self.workingDays, self.timeIntervals)
+            c.generateChromosome()
+            self.addChromosome(c)
+
+    def preparePopulationForNextGenerationSeminars(self, previousSections):
+        while len(self.chromosomes) < self.length:
+            c = Chromosome(self.groups, self.rooms, self.workingDays, self.timeIntervals)
+            c.generateChromosomeForSeminars(previousSections)
+            self.addChromosome(c)
 
     # singlePoint: crossover(c1, c2, x, len(c1.sections))
     # twoPoint: crossover(c1, c2, x, y)

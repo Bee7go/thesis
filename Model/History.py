@@ -50,7 +50,7 @@ class History:
 
     def showTable(self):
         table = PrettyTable(['N',
-                             'Crossover type',
+                             'C',
                              'M',
                              'K',
                              'G',
@@ -62,6 +62,7 @@ class History:
         print(table)
         print("Legend:")
         print("N: number of individuals in the starting population")
+        print("C: number of individuals to suffer mutations")
         print("M: number of individuals to suffer mutations")
         print(
             "K: number of best solutions extracted from the current population used to be part of the next generation")
