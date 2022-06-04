@@ -14,9 +14,6 @@ class Group:
     def GetName(self):
         return str(self.name)
 
-    def GetNumberOfStudents(self):
-        return int(self.numberOfStudents)
-
     def GetCourseClasses(self):
         return self.courseClasses
 
@@ -31,9 +28,7 @@ class Group:
         return self.id == otherGroup.id
 
     def __str__(self):
-        result = self.id + ' --- ' + self.name + ' --- '
+        result = self.id + ' --- ' + self.name + ' --- Courses: '
         for c in self.courseClasses:
-            result += str(c) + ' '
+            result += c.id + '. ' + c.name + ', '
         return result
-
-

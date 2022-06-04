@@ -32,7 +32,8 @@ class History:
         file = open(r'Data\history.csv', "w")
         for rec in self.top:
             file.write(
-                str(rec.N) + ',' + str(rec.crossover) + ',' + str(rec.M) + ',' + str(rec.K) + ',' + str(rec.G) + ',' + str(
+                str(rec.N) + ',' + str(rec.crossover) + ',' + str(rec.M) + ',' + str(rec.K) + ',' + str(
+                    rec.G) + ',' + str(
                     rec.bestFitness) + ',' + str(rec.timeSpend))
             file.write('\n')
 

@@ -27,10 +27,6 @@ class Section:
         return self.timeInterval
 
     def __str__(self):
-        # return 'Group ' + self.group.name + ' will have the course of ' + self.course.name + ' on ' +\
-        #        self.dayOfTheWeek.name + ' in time interval [' + self.timeInterval.startTime + '-' + self.timeInterval.endTime +\
-        #        '] with professor ' + self.professor.name + ' in room ' + self.room.name
-
         return self.group.name + ' | course:' + self.course.name + ' | day: ' + \
                self.dayOfTheWeek.name + ' | [' + self.timeInterval.startTime + '-' + self.timeInterval.endTime + \
                '] | professor: ' + self.professor.name + ' | room: ' + self.room.name

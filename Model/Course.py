@@ -4,7 +4,6 @@ class Course:
         self.id = id
         self.name = name
         self.professors = professors
-        # self.numberOfParticipants = numberOfParticipants
 
     def GetId(self):
         return self.id
@@ -16,10 +15,7 @@ class Course:
         return self.professors
 
     def __str__(self):
-        result = self.id + ' --- ' + self.name + ' --- '
+        result = self.id + ' --- ' + self.name + ' --- Professors: '
         for prof in self.professors:
-            result += str(prof) + ' '
+            result += prof.id + '. ' + prof.name + ', '
         return result
-
-    # def GetNumberOfParticipants(self):
-    #     return self.numberOfParticipants

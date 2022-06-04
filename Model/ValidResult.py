@@ -7,4 +7,3 @@ class ValidResult:
         self.G = G
         self.bestFitness = bestFitness
         self.timeSpend = timeSpend
-
