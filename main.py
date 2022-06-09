@@ -36,32 +36,23 @@ def loadCurrentVariablesFromPickle():
         return pickle.load(fi)
 
 
-def BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays, timeIntervals, currentN, currentC,
+def findNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays, timeIntervals, currentN, currentC,
                              currentM, currentK, currentG):
-    print('currentN')
-    print(currentN)
-    print('currentC')
-    print(currentC)
-    print('currentM')
-    print(currentM)
-    print('currentK')
-    print(currentK)
-    print('currentG')
-    print(currentG)
 
+    runningTime = 60 * 60 * 7
     fitnessTotal = -1
     groupFitness = -1
     courseFitness = -1
 
     start_time = time.time()
     print('searching started ....')
-    while fitnessTotal != 0:
-        while groupFitness != 0:
-            while courseFitness != 0:
+    while fitnessTotal != 0 and time.time() - start_time < runningTime:
+        while groupFitness != 0 and time.time() - start_time < runningTime:
+            while courseFitness != 0 and time.time() - start_time < runningTime:
                 nr_of_generations = currentG
                 p1 = Population(currentN, academicYears, rooms, workingDays, timeIntervals)
                 p1.generatePopulationForCourses()
-                while nr_of_generations and p1.bestFitness != 0:
+                while nr_of_generations and p1.bestFitness != 0 and time.time() - start_time < runningTime:
                     nrOfParents = currentC
                     while nrOfParents:
                         parent1 = p1.chromosomes[random.randint(0, currentN - 1)]
@@ -90,18 +81,11 @@ def BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDa
 
                 p1toSemiGroups = p1.bestChromosome.transformToSemiGroups(semigroups)
                 courseFitness = p1.bestFitness
-                # print('best solution is:\n', p1.bestChromosome)
-                # print('best fitness is: ', p1.bestFitness)
 
-            currentN = 80
-            currentC = 10
-            currentM = 90
-            currentK = 80
-            currentG = 200
             nr_of_generations = currentG
             p2 = Population(currentN, groups, rooms, workingDays, timeIntervals)
             p2.generatePopulationForSeminars(p1toSemiGroups.sections)
-            while nr_of_generations and p2.bestFitness != 0:
+            while nr_of_generations and p2.bestFitness != 0 and time.time() - start_time < runningTime:
                 nrOfParents = currentC
                 while nrOfParents:
                     r = random.randint(0, currentN - 1)
@@ -129,25 +113,18 @@ def BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDa
                 print('setting seminars ....')
                 print('- best so far: ', p2.bestFitness)
 
-            # print('best solution is:\n', p2.bestChromosome)
             p2toSemiGroups = p2.bestChromosome.transformToSemiGroups(semigroups)
             groupFitness = p2.bestFitness
             courseFitness = -1
 
-        # --------------------------
 
-        currentN = 300
-        currentC = 20
-        currentM = 200
-        currentK = 80
-        currentG = 2000
         print("got to labs")
 
         nr_of_generations = currentG
         p3 = Population(currentN, semigroups, rooms, workingDays, timeIntervals)
         p3.generatePopulationForSeminars(p1toSemiGroups.sections + p2toSemiGroups.sections)
 
-        while nr_of_generations and p3.bestFitness != 0:
+        while nr_of_generations and p3.bestFitness != 0 and time.time() - start_time < runningTime:
             nrOfParents = currentC
             while nrOfParents:
                 parent1 = copy.deepcopy(p3.chromosomes[random.randint(0, currentN - 1)])
@@ -183,19 +160,17 @@ def BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDa
     print(p2.bestChromosome)
     print(p1.bestChromosome)
 
-    # p3.bestChromosome = p3.bestChromosome.transformToSemiGroups(semigroups)
-    # print('best solution is:\n', p3.bestChromosome)
-    # print(p1.bestChromosome)
-    print('best fitness is: ', p3.bestFitness)
+    print('best fitness is: ', p1.bestFitness + p2.bestFitness + p3.bestFitness)
+    p3.bestChromosome.sections += p1toSemiGroups.sections + p2toSemiGroups.sections
 
-    vR = ValidResult(currentN, currentC, currentM, currentK, currentG, 0, time.time() - start_time)
+    vR = ValidResult(currentN, currentC, currentM, currentK, currentG, p1.bestFitness + p2.bestFitness + p3.bestFitness, time.time() - start_time)
 
     if history.updateResultIfBetter(vR):
         print("--> New solution is in top!\n")
     else:
         print("--> New solution found is not in top!\n")
     history.showTable()
-    return {"bestSolution": p3.bestChromosome, "bestFitness": p3.bestFitness, "solving time": time.time() - start_time}
+    return {"bestSolution": p3.bestChromosome, "bestFitness": p1.bestFitness + p2.bestFitness + p3.bestFitness, "solving time": time.time() - start_time}
 
 def adminMenu():
     print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
@@ -256,25 +231,11 @@ def operationsOnEachDataSetMenu(element):
 def main():
     # setup
     currentVariables = loadCurrentVariablesFromPickle()
-    # currentN = currentVariables[0]
-    # currentC = currentVariables[1]
-    # currentM = currentVariables[2]
-    # currentK = currentVariables[3]
-    # currentG = currentVariables[4]
-    # currentSol = currentVariables[5]
-
-    # foarte ok pt seminare:
-    # currentN = 100
-    # currentC = 10
-    # currentM = 90
-    # currentK = 90
-    # currentG = 200
-
-    currentN = 100
-    currentC = 10
-    currentM = 90
-    currentK = 90
-    currentG = 200
+    currentN = currentVariables[0]
+    currentC = currentVariables[1]
+    currentM = currentVariables[2]
+    currentK = currentVariables[3]
+    currentG = currentVariables[4]
     currentSol = currentVariables[5]
 
     # time intervals
@@ -339,8 +300,6 @@ def main():
 
         groups.append(Group(group[0], group[1], groupCourses))
 
-        print(str(groups[len(groups) - 1]))
-
     # semi-groups
     file = open('Data/semigroups.csv')
     rows = csv.reader(file)
@@ -374,10 +333,6 @@ def main():
     users = []
     for user in rows:
         users.append(User(user[0], user[1], user[2], user[3]))
-    # ---------------------------------------------
-
-    # BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays, timeIntervals, currentN, currentC,
-    #                            currentM, currentK, currentG)
 
 
     # ---------------------------------------------
@@ -412,7 +367,7 @@ def main():
                         print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
                         currentN = N
                         currentSol = \
-                            BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
+                            findNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
                                                      timeIntervals,
                                                      currentN, currentC,
                                                      currentM, currentK, currentG)["bestSolution"]
@@ -424,7 +379,7 @@ def main():
                         print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
                         currentC = C
                         currentSol = \
-                            BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
+                            findNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
                                                      timeIntervals,
                                                      currentN, currentC,
                                                      currentM, currentK, currentG)["bestSolution"]
@@ -436,7 +391,7 @@ def main():
                         print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
                         currentM = M
                         currentSol = \
-                            BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
+                            findNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
                                                      timeIntervals,
                                                      currentN, currentC,
                                                      currentM, currentK, currentG)["bestSolution"]
@@ -448,7 +403,7 @@ def main():
                         print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
                         currentK = K
                         currentSol = \
-                            BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
+                            findNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
                                                      timeIntervals,
                                                      currentN, currentC,
                                                      currentM, currentK, currentG)["bestSolution"]
@@ -460,7 +415,7 @@ def main():
                         print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
                         currentG = G
                         currentSol = \
-                            BETAfindNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
+                            findNewBestTimetable(academicYears, groups, semigroups, rooms, workingDays,
                                                      timeIntervals,
                                                      currentN, currentC,
                                                      currentM, currentK, currentG)["bestSolution"]
@@ -885,10 +840,11 @@ def main():
                 print("Time intervals you prefer in that day:")
                 for tI in timeIntervals:
                     print(tI)
+                print("7. No preference regarding time intervals")
                 currentTimeIntervals = input("=> time intervals chosen (separated by ','): ")
 
                 print("< - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >")
-                if currentTimeIntervals == '':
+                if currentTimeIntervals == '7':
                     currentTimeIntervals = []
                 else:
                     currentTimeIntervals = currentTimeIntervals.split(',')
@@ -904,8 +860,6 @@ def main():
                         else:
                             prof.addPreferences({'dayOfTheWeek': dayOfTheWeek, 'timeIntervals': currentTimeIntervals})
                         break
-                for prof in professors:
-                    print(prof.preferences)
 
 
 if __name__ == "__main__":

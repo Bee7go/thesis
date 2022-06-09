@@ -3,6 +3,7 @@ import random
 
 from Model.Section import Section
 
+
 class Chromosome:
 
     def __init__(self, groups, rooms, workingDays, timeIntervals):
@@ -43,7 +44,7 @@ class Chromosome:
                             ok = 0
 
                 self.sections.append(
-                    Section(course, copy.deepcopy(group), copy.deepcopy(prof), copy.deepcopy(room), self.workingDays[copy.deepcopy(workingDay)], self.timeIntervals[copy.deepcopy(timeInterval)]))
+                    Section(course, group, prof, room, self.workingDays[workingDay], self.timeIntervals[timeInterval]))
 
     def generateChromosome(self):
         for group in self.groups:
@@ -56,16 +57,13 @@ class Chromosome:
 
     def calculateFitness(self, previousSections):
         score = 0
-        gdts = set()
-        rdts = set()
-        pdts = set()
+
         currentSections = self.sections
 
-        gdtScore = 0
-        rdtScore = 0
-        pdtScore = 0
         if previousSections:
-
+            gdtScore = 0
+            rdtScore = 0
+            pdtScore = 0
             for section1 in currentSections:
                 gdt1 = (section1.group.id, section1.dayOfTheWeek.id, section1.timeInterval.id)
                 rdt1 = (section1.room.id, section1.dayOfTheWeek.id, section1.timeInterval.id)
@@ -77,49 +75,49 @@ class Chromosome:
                     pdt2 = (section2.professor.id, section2.dayOfTheWeek.id, section2.timeInterval.id)
 
                     if gdt1 == gdt2:
-                        score += 1
-                        gdtScore += 1
+                        gdtScore += 50
                     if rdt1 == rdt2:
-                        score += 1
-                        rdtScore += 1
-
+                        rdtScore += 50
                     if pdt1 == pdt2:
-                        score += 1
-                        pdtScore += 1
+                        pdtScore += 50
 
-            return gdtScore // 2 + rdtScore // 2 + pdtScore // 2
+            score = gdtScore // 2 + rdtScore // 2 + pdtScore // 2
+
+        gdts = set()
+        rdts = set()
+        pdts = set()
         for section in currentSections:
             gdt = (section.group.id, section.dayOfTheWeek.id, section.timeInterval.id)
-
-            if section.professor.preferences:
-                if section.dayOfTheWeek.id not in [d['dayOfTheWeek'] for d in section.professor.preferences]:
-                    score += 60
-                else:
-                    timeIntervalsPreferences = section.professor.preferences[next((index for (index, d) in enumerate(section.professor.preferences) if d["dayOfTheWeek"] == section.dayOfTheWeek.id), None)]['timeIntervals']
-                    if timeIntervalsPreferences and section.timeInterval.id not in timeIntervalsPreferences:
-                        score += 30
-
             if gdt in gdts:
-                score += 1
+                score += 50
             else:
                 gdts.add((section.group.id, section.dayOfTheWeek.id, section.timeInterval.id))
 
             rdt = (section.room.id, section.dayOfTheWeek.id, section.timeInterval.id)
             if rdt in rdts:
-                score += 1
+                score += 50
             else:
                 rdts.add((section.group.id, section.dayOfTheWeek.id, section.timeInterval.id))
 
             pdt = (section.professor.id, section.dayOfTheWeek.id, section.timeInterval.id)
             if pdt in pdts:
-                score += 1
+                score += 50
             else:
                 pdts.add((section.group.id, section.dayOfTheWeek.id, section.timeInterval.id))
+
+            if section.professor.preferences:
+                if section.dayOfTheWeek.id not in [d['dayOfTheWeek'] for d in section.professor.preferences]:
+                    score += 10
+                else:
+                    timeIntervalsPreferences = section.professor.preferences[next(
+                        (index for (index, d) in enumerate(section.professor.preferences) if
+                         d["dayOfTheWeek"] == section.dayOfTheWeek.id), None)]['timeIntervals']
+                    if timeIntervalsPreferences and section.timeInterval.id not in timeIntervalsPreferences:
+                        score += 10
 
         return score
 
     def mutationOnRoom(self, k):
-        # random??
         for _ in range(k):
             r = random.randint(0, len(self.sections) - 1)
             old = self.sections[r].room
@@ -143,23 +141,24 @@ class Chromosome:
     def mutationOnProfessor(self, k):
         for _ in range(k):
             r = random.randint(0, len(self.sections) - 1)
+            nrOfProfessors = len(self.sections[r].course.professors)
             old = self.sections[r].professor
             new = self.sections[r].course.professors[
-                random.randint(0, len(self.sections[r].course.professors) - 1)]
-            while old == new and len(self.sections[r].course.professors) - 1 > 1:
+                random.randint(0, nrOfProfessors - 1)]
+            while old == new and nrOfProfessors - 1 > 1:
                 new = self.sections[r].course.professors[
-                    random.randint(0, len(self.sections[r].course.professors) - 1)]
+                    random.randint(0, nrOfProfessors - 1)]
             self.sections[r].professor = new
 
     def transformToSemiGroups(self, allSemiGroups):
-        newBestChromosome = copy.deepcopy(self)
-        newBestChromosome.sections = []
+        transformedChromosome = copy.deepcopy(self)
+        transformedChromosome.sections = []
         for section in self.sections:
             for semigroup in section.group.transformToSemiGroups(allSemiGroups):
-                newBestChromosome.sections.append(
+                transformedChromosome.sections.append(
                     Section(section.course, semigroup, section.professor, section.room, section.dayOfTheWeek,
                             section.timeInterval))
-        return newBestChromosome
+        return transformedChromosome
 
     def __str__(self):
         result = ''

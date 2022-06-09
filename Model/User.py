@@ -19,4 +19,9 @@ class User:
         return self.type
 
     def __str__(self):
-        return self.userName + " ---  " + self.type
+        name = ""
+        if self.type == "1": name = "System Administrator"
+        if self.type == "2": name = "Timetable responsible"
+        if self.type == "3": name = "Student"
+        if self.type == "4": name = "Professor"
+        return self.id + '. ' + self.userName + " -  " + name

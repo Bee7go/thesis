@@ -14,6 +14,7 @@ class Population:
         self.chromosomes = []
         self.fitnessScores = []
         self.bestFitness = 300000
+        self.bestChromosome = Chromosome(groups,rooms,workingDays,timeIntervals)
 
     def generatePopulationForCourses(self):
         for _ in range(self.length):
@@ -32,9 +33,8 @@ class Population:
         for chromosome in self.chromosomes:
             chromosomeTransformed = copy.deepcopy(chromosome)
             if previousSections:
-                calculatedFitness = chromosome.calculateFitness([])
                 chromosomeTransformed = chromosome.transformToSemiGroups(allSemiGroups)
-                calculatedFitness += chromosomeTransformed.calculateFitness(previousSections)
+                calculatedFitness = chromosomeTransformed.calculateFitness(previousSections)
             else:
                 calculatedFitness = copy.deepcopy(chromosomeTransformed.calculateFitness([]))
             self.fitnessScores.append(calculatedFitness)
